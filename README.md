@@ -25,4 +25,4 @@ Much more to come...
 
 ### Contact
 
-Eric Hippler, erichippler.com, [LinkedIn](https://www.linkedin.com/in/eric-hippler/)
+Eric Hippler, [erichippler.com](https://erichippler.com), [LinkedIn](https://www.linkedin.com/in/eric-hippler/)
