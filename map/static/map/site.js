@@ -40,24 +40,32 @@ function load_map(token) {
     })
     tile.addTo(myMap);
 
-    load_route(myMap)
+    get_route_data(myMap)
 };
 
-function load_route(map) {
+function get_route_data(map) {
+    const csrftoken = Cookies.get('csrftoken');
+    let request = new Request(
+        "/route_data",
+        {
+            method: "GET",
+            headers: {'X-CSRFToken': csrftoken},
+            mode: "same-origin"
+        }
+    );
+    
+    // Grab all GPS data points and load route
+    fetch(request)
+    .then(response => response.json())
+    .then(data => {
+        load_route(map, data);
+    });
+};
 
-    const latlngs = [
-        [37.99848, -78.89204],
-        [37.96237, -78.9065699],
-        [37.94919, -78.91557]
-    ];
+function load_route(map, data) {
 
-    L.polyline(latlngs, {color: 'red', weight: 10, opacity: 0.5}).addTo(map);
+    // Add a polyline route
+    let route = L.polyline(data, {color: 'red', weight: 10, opacity: 0.5}).addTo(map);
 
-    const another = [
-        [37.94919, -78.91557],
-        [37.94328,-78.9314699],
-        [37.94127,-78.93691]
-    ];
-
-    L.polyline(another, {color: 'green', weight: 10, opacity: 0.5}).addTo(map);
-}
+    map.fitBounds(route.getBounds());
+};
