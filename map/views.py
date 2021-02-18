@@ -17,7 +17,7 @@ def token(request):
     return JsonResponse(token)
 
 def get_route_data(request):
-    url = f"http://{request.get_host()}{reverse('gpx_data')}"
+    url = f"http://{request.get_host()}{reverse('scrape:gpx_data')}"
     response = requests.get(url)
     data = json.loads(response.content)
     return JsonResponse(data, safe=False)

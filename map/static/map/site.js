@@ -65,6 +65,7 @@ function get_route_data(map) {
 function load_route(map, data) {
 
     // Add a polyline route
+    
     let route = L.polyline(data, {color: 'red', weight: 10, opacity: 0.5}).addTo(map);
 
     map.fitBounds(route.getBounds());
