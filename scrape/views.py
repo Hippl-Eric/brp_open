@@ -1,23 +1,44 @@
-from django.shortcuts import render
-from django.http import JsonResponse
-from scrape.parse_gpx import gpx_to_points
-from bs4 import BeautifulSoup
 import requests
 import math
+import re
+import json
+
+from django.http import JsonResponse
+
+from scrape.parse_gpx import gpx_to_points
+from scrape.classes import GPX_Data, NPS_Data
+
+from dateutil.parser import parse
+from bs4 import BeautifulSoup
 
 # Create your views here.
 
 def gpx_data(request):
-    file = "scrape\Blue_Ridge_Parkway_-_NS.gpx"
-    data = gpx_to_points(file)
-    print(get_distance(data))
-    return JsonResponse(data, safe=False)
+    filename = "scrape\Blue_Ridge_Parkway_-_NS.gpx"
+    data = gpx_to_points(filename)
+    gpx_data = GPX_Data(filename=filename, data=data)
+    return JsonResponse(gpx_data.__dict__, safe=False)
 
 def scrape(request):
     url = 'https://www.nps.gov/blri/planyourvisit/roadclosures.htm'
     html = requests.get(url)
     soup = BeautifulSoup(html.content, 'html.parser')
-    tables = soup.find_all('div', class_='table-wrapper')
+    data_div = soup.find(id='cs_control_6725830')
+    
+    # Get the update date
+    update = data_div.find('h3', string=re.compile('Road Status as of'))
+    update = update.text.strip()
+    update = update.strip('Road Status as of Thursday, ')
+    update = parse(update)
+    
+    # Get the next update
+    next_update = data_div.find('em', string=re.compile('This page will be updated on'))
+    next_update = next_update.text.strip()
+    next_update = next_update.strip('This page will be updated on ')
+    next_update = parse(next_update)
+
+    # Get table data   
+    tables = data_div.find_all('div', class_='table-wrapper')
     data = []
     for table in tables:
         rows = table.find_all('tr')
@@ -26,12 +47,18 @@ def scrape(request):
             if cells:
                 row_data = [cell.text.strip() for cell in cells]
                 data.append(row_data)
-    # TODO Validate data: ensure data not empty
-    return JsonResponse(data, safe=False)
+    
+    # Return json data
+    nps_data = NPS_Data(update=update, next_update=next_update, data=data)
+    return JsonResponse(nps_data.__dict__, safe=False)
 
 
 def get_distance(coordinates):
+    ''' Return total distance in miles between a list of coordinates '''
+    
     def haversine(coord1, coord2):
+        ''' Return distance in miles between two (2) coordinates '''
+        
         lat1, long1, ele1 = coord1
         lat2, long2, ele2 = coord2
         r = 3958.8

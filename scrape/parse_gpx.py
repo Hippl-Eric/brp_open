@@ -20,7 +20,7 @@ def gpx_to_points(file_name):
         # Read entire file, store as string
         data = f.read()
         
-        # Create a list of tuple points
+        # Create a list of point tuples
         matches = re.findall(pattern='<trkpt lat="([-0-9\.]+)" lon="([-0-9\.]+)">\n\s+<ele>([-0-9\.]+)</ele>\n\s+</trkpt>', string=data)
               
     return tuple(matches)
