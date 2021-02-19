@@ -1,5 +1,5 @@
 import json
-from datetime import datetime
+import datetime
 
 from django.test import TestCase, Client
 from django.urls import reverse
@@ -27,7 +27,7 @@ class ScrapeTestCase(TestCase):
         data = json.loads(response.content)
         self.assertEqual(response.status_code, 200)
         self.assertIsInstance(data, dict)
-        self.assertIsInstance(datetime.fromisoformat(data['update']), datetime)
-        self.assertIsInstance(datetime.fromisoformat(data['next_update']), datetime)
+        self.assertIsInstance(datetime.datetime.fromisoformat(data['update']), datetime.datetime)
+        self.assertIsInstance(datetime.date.fromisoformat(data['next_update']), datetime.date)
         self.assertIsInstance(data['data'], list)
         self.assertIsInstance(data['data'][0], list)

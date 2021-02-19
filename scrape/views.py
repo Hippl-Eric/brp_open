@@ -2,6 +2,9 @@ import requests
 import math
 import re
 import json
+from pytz import timezone
+import pytz
+from datetime import date, datetime
 
 from django.http import JsonResponse
 
@@ -30,12 +33,14 @@ def scrape(request):
     update = update.text.strip()
     update = update.strip('Road Status as of Thursday, ')
     update = parse(update)
+    eastern = timezone('US/Eastern')
+    update = eastern.localize(update)
     
     # Get the next update
     next_update = data_div.find('em', string=re.compile('This page will be updated on'))
     next_update = next_update.text.strip()
     next_update = next_update.strip('This page will be updated on ')
-    next_update = parse(next_update)
+    next_update = parse(next_update).date()
 
     # Get table data   
     tables = data_div.find_all('div', class_='table-wrapper')
