@@ -48,10 +48,12 @@ def scrape(request):
     for table in tables:
         rows = table.find_all('tr')
         for row in rows:
-            cells = row.find_all('p')
+            cells = row.find_all('td')
             if cells:
                 row_data = [cell.text.strip() for cell in cells]
-                data.append(row_data)
+                # Only Segments, filter out points for now
+                if "-" in row_data[0]:
+                    data.append(row_data)
     
     # Return json data
     nps_data = NPS_Data(update=update, next_update=next_update, data=data)

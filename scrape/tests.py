@@ -24,8 +24,8 @@ class ScrapeTestCase(TestCase):
     def test_scrape(self):
         url = reverse('scrape:scrape')
         response = self.c.get(url)
-        data = json.loads(response.content)
         self.assertEqual(response.status_code, 200)
+        data = json.loads(response.content)
         self.assertIsInstance(data, dict)
         self.assertIsInstance(datetime.datetime.fromisoformat(data['update']), datetime.datetime)
         self.assertIsInstance(datetime.date.fromisoformat(data['next_update']), datetime.date)

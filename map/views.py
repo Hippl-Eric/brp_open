@@ -20,4 +20,11 @@ def get_route_data(request):
     url = f"http://{request.get_host()}{reverse('scrape:gpx_data')}"
     response = requests.get(url)
     data = json.loads(response.content)
+    
+    # Create 2 lists, list of new segments to be created, list of existing segments to be updated
+    
+    # Create the new segments one by one (calls save method)
+    
+    # Bulk update existing segments
+    
     return JsonResponse(data, safe=False)
