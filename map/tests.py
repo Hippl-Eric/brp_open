@@ -35,16 +35,23 @@ class ModelsTestCase(TestCase):
                 segments.append(Seg)
             except IndexError as e:
                 print(seg)
-        Segment.objects.bulk_create(segments)
+        # Segment.objects.bulk_create(segments)
+        for segment in segments:
+            segment.save()
         
-    def test_route(self):
+    def test_models(self):
         route = Route.objects.first()
         self.assertIsNotNone(route)
         
-    def test_update(self):
         update = Update.objects.first()
         self.assertIsNotNone(update)
     
-    def test_segment(self):
-        segments = Segment.objects.all()
-        self.assertEqual(len(segments), len(self.scr_data['data']))
+        segment_count = route.segments.count()
+        self.assertEqual(segment_count, len(self.scr_data['data']))
+        
+        segment = Segment.objects.first()
+        pass
+    
+    def test_get_route_data(self):
+        url = reverse('map:route_data')
+        route_data_res = self.c.get(url)

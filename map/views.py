@@ -1,9 +1,12 @@
-from django.shortcuts import render, reverse, redirect
-from django.http import JsonResponse, HttpResponse
-from dotenv import load_dotenv
 import os
 import requests
 import json
+
+from dotenv import load_dotenv
+
+from django.shortcuts import render, reverse, redirect
+from django.http import JsonResponse, HttpResponse
+from .models import Route, Update, Segment
 
 # Create your views here.
 
@@ -17,9 +20,9 @@ def token(request):
     return JsonResponse(token)
 
 def get_route_data(request):
-    url = f"http://{request.get_host()}{reverse('scrape:gpx_data')}"
-    response = requests.get(url)
-    data = json.loads(response.content)
+    
+    most_recent_update = Update.objects.latest('timestamp')
+    segments = Segment.objects.values_list('post_range', flat=True).filter(last_update=most_recent_update)
     
     # Create 2 lists, list of new segments to be created, list of existing segments to be updated
     

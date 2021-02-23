@@ -1,7 +1,5 @@
-import requests
-import math
+    import requests
 import re
-import json
 from pytz import timezone
 import pytz
 from datetime import date, datetime
@@ -31,7 +29,7 @@ def scrape(request):
     # Get the update date
     update = data_div.find('h3', string=re.compile('Road Status as of'))
     update = update.text.strip()
-    update = update.strip('Road Status as of Thursday, ')
+    update = update[18:]
     update = parse(update)
     eastern = timezone('US/Eastern')
     update = eastern.localize(update)
@@ -53,30 +51,9 @@ def scrape(request):
                 row_data = [cell.text.strip() for cell in cells]
                 # Only Segments, filter out points for now
                 if "-" in row_data[0]:
+                    # TODO ensure matches format (XX.X - XX.X)
                     data.append(row_data)
     
     # Return json data
     nps_data = NPS_Data(update=update, next_update=next_update, data=data)
     return JsonResponse(nps_data.__dict__, safe=False)
-
-
-def get_distance(coordinates):
-    ''' Return total distance in miles between a list of coordinates '''
-    
-    def haversine(coord1, coord2):
-        ''' Return distance in miles between two (2) coordinates '''
-        
-        lat1, long1, ele1 = coord1
-        lat2, long2, ele2 = coord2
-        r = 3958.8
-        rad = math.pi/180
-        lat1 = float(lat1)*rad
-        long1 = float(long1)*rad
-        lat2 = float(lat2)*rad
-        long2 = float(long2)*rad
-        d = 2*r*math.asin(math.sqrt((math.sin((lat2-lat1)/2))**2 + math.cos(lat1)*math.cos(lat2)*(math.sin((long2-long1)/2))**2))
-        return d
-    d = 0
-    for i in range(len(coordinates)-1):
-        d += haversine(coordinates[i], coordinates[i+1])
-    return d
