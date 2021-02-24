@@ -1,7 +1,7 @@
 import json
 from pytz import timezone
 import pytz
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 
 from django.test import TestCase, Client
 from django.urls import reverse
@@ -53,5 +53,12 @@ class ModelsTestCase(TestCase):
         pass
     
     def test_get_route_data(self):
+        url = reverse('map:route_data')
+        route_data_res = self.c.get(url)
+        
+    def test_get_route_data_olddate(self):
+        update = Update.objects.first()
+        update.timestamp = update.timestamp - timedelta(1)
+        update.save()
         url = reverse('map:route_data')
         route_data_res = self.c.get(url)

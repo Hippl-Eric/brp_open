@@ -40,3 +40,12 @@ class Segment(models.Model):
         
     def set_points(self):
         self.points = self.route.return_points(start=self.post_start, end=self.post_end)
+        
+    def serialize(self):
+        return {
+            'post_range': self.post_range,
+            'cross_roads': self.cross_roads,
+            'status': self.status,
+            'notes': self.notes,
+            'points': self.points
+        }
