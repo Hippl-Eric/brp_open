@@ -26,9 +26,11 @@ function request_token(callback) {
     .then(data => callback(data.key));
 }
 
-/** Leaflet */
 function load_map(token) {
-    var myMap = L.map('leaflet').setView([37.99848, -78.89204], 10);
+    // Leaflet.js map
+    var myMap = L.map('leaflet');
+    const defBounds = L.latLngBounds(L.latLng(38.0306, -78.85724), L.latLng(35.29641, -83.29456))
+    myMap.fitBounds(defBounds);
 
     let tile = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
@@ -64,9 +66,37 @@ function get_route_data(map) {
 
 function load_route(map, data) {
 
-    // Add a polyline route
-    
-    let route = L.polyline(data, {color: 'red', weight: 10, opacity: 0.5}).addTo(map);
+    // Parse data
+    const update = data['update'];
+    const nextUpdate = data['next_update'];
+    const segments = data['segments'] // Array
 
-    map.fitBounds(route.getBounds());
+    // Create polylines and add to map
+    let polylines = createPolylines(segments);
+    polylines.forEach(polyline => {
+        polyline.addTo(map);
+    });
 };
+
+function createPolylines(segment_array) {
+    // Parse segment data and return array of L.polyline objects
+
+    let polylines = [];
+    segment_array.forEach(segObject => {
+        let color = 'red';
+        if (segObject['status'] === 'Open') {
+            color = 'green';
+        };
+        polyline = L.polyline(segObject['points'], {color: color, weight: 10, opacity: 0.5});
+
+        // Create hover tooltip
+        text = `<b>Mileposts:</b> ${segObject['post_range']}<br>
+        <b>Crossroads:</b> ${segObject['cross_roads']}<br>
+        <b>Status:</b> ${segObject['status']}<br>
+        <b>Notes:</b> ${segObject['notes']}`
+        polyline.bindTooltip(text, {sticky: true}).openTooltip();
+
+        polylines.push(polyline);
+    });
+    return polylines
+}
