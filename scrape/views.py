@@ -6,8 +6,8 @@ from datetime import date, datetime
 
 from django.http import JsonResponse
 
-from scrape.parse_gpx import gpx_to_points
-from scrape.classes import GPX_Data, NPS_Data
+from scrape.parse_gpx import create_gpx_data_class
+from scrape.classes import NPS_Data
 
 from dateutil.parser import parse
 from bs4 import BeautifulSoup
@@ -16,8 +16,7 @@ from bs4 import BeautifulSoup
 
 def gpx_data(request):
     filename = "scrape\Blue_Ridge_Parkway_-_NS.gpx"
-    data = gpx_to_points(filename)
-    gpx_data = GPX_Data(filename=filename, data=data)
+    gpx_data = create_gpx_data_class(file_name=filename)
     return JsonResponse(gpx_data.__dict__, safe=False)
 
 def scrape(request):

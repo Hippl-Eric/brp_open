@@ -2,6 +2,7 @@ import re
 
 from django.db import models
 
+from scrape.parse_gpx import gpx_to_points
 from .haversine import get_points
 
 # Create your models here.
@@ -12,6 +13,17 @@ class Route(models.Model):
     
     def return_points(self, start, end=None):
         return get_points(route=self.all_points, start=start, end=end)
+    
+    def update_points(self):
+        self.all_points = gpx_to_points(self.name)
+        self.save()
+        self.update_segment_points()
+        
+    def update_segment_points(self):
+        segs = self.segments.all()
+        for seg in segs:
+            seg.set_points()
+        Segment.objects.bulk_update(segs, ['points'])
     
 class Update(models.Model):
     timestamp = models.DateTimeField()

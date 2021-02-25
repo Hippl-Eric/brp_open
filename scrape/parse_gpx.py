@@ -1,5 +1,7 @@
 import re
 
+from scrape.classes import GPX_Data
+
 def gpx_to_points(file_name):
     """
     Parse a gpx file and return all points matching the defined patten.
@@ -22,8 +24,12 @@ def gpx_to_points(file_name):
         
         # Create a list of point tuples
         matches = re.findall(pattern='<trkpt lat="([-0-9\.]+)" lon="([-0-9\.]+)">\n\s+<ele>([-0-9\.]+)</ele>\n\s+</trkpt>', string=data)
-              
-    return tuple(matches)
 
-if __name__ == "__main__":
-    gpx_to_points("parkway_n_to_s.gpx")
+    def tuple_to_list(tup):
+        return list(tup)
+    
+    return list(map(tuple_to_list, matches))
+
+def create_gpx_data_class(file_name):
+    data = gpx_to_points(file_name)
+    return GPX_Data(filename=file_name, data=data)
