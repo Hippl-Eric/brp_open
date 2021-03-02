@@ -21,17 +21,21 @@ def get_points(route, start, end):
     points = []
     
     # Find the start point
-    while d < start:
-        try:
-            d += haversine(route[i], route[i+1])
-            i += 1
-        except IndexError:
-            raise Exception("Start value exceeds total route distance")
-            break
+    if start <= 0:
+        d += haversine(route[i], route[i+1])
+        i += 1
+
+    else:
+        while d < start:
+            try:
+                d += haversine(route[i], route[i+1])
+                i += 1
+            except IndexError:
+                raise Exception("Start value exceeds total route distance")
+                break
     
     # Add the start point
-    points.append(route[i])
-    i += 1
+    points.append(route[i-1])
     
     # Add all points up to end
     if end:
