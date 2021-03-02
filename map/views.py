@@ -49,8 +49,10 @@ def get_route_data(request):
         # Create list of segments that match NPS data, but are not in the DB (to be created)
         new_segment_post_ranges = [nps_data_post_range for nps_data_post_range in nps_data_post_ranges if nps_data_post_range not in segment_post_ranges]
         
-        # Create new Update
-        most_recent_update = Update.objects.create(timestamp=nps_data['update'], next_update=nps_data['next_update'])
+        # Update Update
+        most_recent_update.timestamp = nps_data['update']
+        most_recent_update.next_update = nps_data['next_update']
+        most_recent_update.save()
         most_recent_update.refresh_from_db()
         
         # Bulk update existing segments
@@ -59,7 +61,6 @@ def get_route_data(request):
             for i, seg in enumerate(nps_data['data']):
                 if seg[0] == update_segment.post_range:
                     break
-            update_segment.last_update = most_recent_update
             update_segment.status = nps_data['data'][i][2]
             update_segment.notes = nps_data['data'][i][3]
         Segment.objects.bulk_update(update_segments, ['last_update', 'status', 'notes'])
@@ -72,7 +73,6 @@ def get_route_data(request):
                     break
             new_segment = Segment.objects.create(
                 route=route,
-                last_update=most_recent_update,
                 post_range=nps_data['data'][i][0],
                 cross_roads=nps_data['data'][i][1],
                 status=nps_data['data'][i][2],
