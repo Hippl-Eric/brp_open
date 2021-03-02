@@ -1,3 +1,18 @@
-#leaflet {
-    height: 100vh;
+body {
+    margin: 0px;
+}
+
+#page {
+    height: calc(100vh - 16px);
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+}
+
+#info {
+    flex: none;
+}
+
+#map {
+    flex-grow: 1;
 }
