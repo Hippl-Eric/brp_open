@@ -27,7 +27,7 @@ class Route(models.Model):
     
 class Update(models.Model):
     timestamp = models.DateTimeField()
-    next_update = models.DateField()
+    next_update = models.DateTimeField()
     
 class Segment(models.Model):
     route = models.ForeignKey("Route", on_delete=models.CASCADE, related_name="segments")

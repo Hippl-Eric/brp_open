@@ -28,6 +28,6 @@ class ScrapeTestCase(TestCase):
         data = json.loads(response.content)
         self.assertIsInstance(data, dict)
         self.assertIsInstance(datetime.datetime.fromisoformat(data['update']), datetime.datetime)
-        self.assertIsInstance(datetime.date.fromisoformat(data['next_update']), datetime.date)
+        self.assertIsInstance(datetime.datetime.fromisoformat(data['next_update']), datetime.datetime)
         self.assertIsInstance(data['data'], list)
         self.assertIsInstance(data['data'][0], list)

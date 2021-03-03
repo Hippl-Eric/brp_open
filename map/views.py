@@ -32,10 +32,15 @@ def get_route_data(request):
         route = Route.objects.first()
     
     # Check if database matches NPS data, update data if not
-    most_recent_update = Update.objects.latest('timestamp')
+    try:
+        most_recent_update = Update.objects.latest('timestamp')
+    except Update.DoesNotExist:
+        setupDB(request)
+        most_recent_update = Update.objects.latest('timestamp')
+        
     nps_response = scrape(request)
     nps_data = json.loads(nps_response.content)
-    if most_recent_update.timestamp != datetime.datetime.fromisoformat(nps_data['update']):
+    if not most_recent_update or most_recent_update.timestamp != datetime.datetime.fromisoformat(nps_data['update']):
         
         # Create list of all NPS post_range segment values
         nps_data_post_ranges = [post[0] for post in nps_data['data']]
@@ -93,7 +98,7 @@ def setupDB(request):
     # Create Route
     gpx_response = gpx_data(request)
     route_data = json.loads(gpx_response.content)
-    route = Route.objects.create(name=route_data['filename'], all_points=route_data['data'])
+    route, _ = Route.objects.get_or_create(name=route_data['filename'], defaults={'all_points': route_data['data']})
     
     # Create Update
     scr_response = scrape(request)

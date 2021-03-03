@@ -32,12 +32,15 @@ def scrape(request):
     update = parse(update)
     eastern = timezone('US/Eastern')
     update = eastern.localize(update)
+    hour = update.hour
     
     # Get the next update
     next_update = data_div.find('em', string=re.compile('This page will be updated on'))
     next_update = next_update.text.strip()
-    next_update = next_update.strip('This page will be updated on ')
-    next_update = parse(next_update).date()
+    next_update = next_update[29:]
+    next_update = parse(next_update)
+    next_update = next_update.replace(hour=hour)
+    next_update = eastern.localize(next_update)
 
     # Get table data   
     tables = data_div.find_all('div', class_='table-wrapper')
