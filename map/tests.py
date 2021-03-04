@@ -7,7 +7,6 @@ from django.test import TestCase, Client
 from django.urls import reverse
 
 from .models import Route, Update, Segment
-from scrape.parse_gpx import gpx_to_points
 
 # Create your tests here.
 class ModelsTestCase(TestCase):

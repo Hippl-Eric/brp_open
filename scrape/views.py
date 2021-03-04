@@ -1,3 +1,4 @@
+import os
 import requests
 import re
 from pytz import timezone
@@ -11,12 +12,14 @@ from scrape.classes import NPS_Data
 
 from dateutil.parser import parse
 from bs4 import BeautifulSoup
+from dotenv import load_dotenv
 
 # Create your views here.
+load_dotenv()
 
 def gpx_data(request):
-    filename = "scrape\Blue_Ridge_Parkway_-_NS.gpx"
-    gpx_data = create_gpx_data_class(file_name=filename)
+    filename = os.getenv('ROUTE_JSON')
+    gpx_data = create_gpx_data_class(filename=filename)
     return JsonResponse(gpx_data.__dict__, safe=False)
 
 def scrape(request):
