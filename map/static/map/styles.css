@@ -9,10 +9,32 @@ body {
     flex-direction: column;
 }
 
-#info {
+#map-info {
     flex: none;
 }
 
 #map {
     flex-grow: 1;
+}
+
+#modal {
+    background-color: rgba(153, 153, 153, 0.7);
+    height: 100vh;
+    width: 100vw;
+    z-index: 1001;
+    position: fixed;
+    display: none;
+    
+}
+
+#content {
+    background-color: red;
+    height: 150px;
+    width: 150px;
+    z-index: 1002;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
 }

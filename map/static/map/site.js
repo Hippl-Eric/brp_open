@@ -1,5 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
     requestToken(loadMap);
+    document.getElementById('launch-modal').addEventListener('click', launchModal);
+    document.getElementById('modal').addEventListener('click', closeModal);
+    document.getElementById('content').addEventListener('click', contentClick);
 });
 
 let myMap = null
@@ -132,10 +135,23 @@ function formatUpdate(isoString) {
 
 function formatNextUpdate(isoString) {
     // Format: March 3rd
-    // TODO off by one day due to timezone conversion 
     const date = new Date(isoString);
     const options = {month: 'long', day: 'numeric' };
     let strDate = date.toLocaleDateString('en-NY', options);
                 
     return `${strDate}`;
+}
+
+function launchModal() {
+    event.preventDefault()
+    document.getElementById('modal').style.display = 'block';
+}
+
+function closeModal() {
+    document.getElementById('modal').style.display = 'none';
+}
+
+function contentClick() {
+    event.stopPropagation()
+    console.log('content')
 }
