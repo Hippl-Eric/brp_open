@@ -1,5 +1,8 @@
+import os
 import re
 import json
+
+from django.conf import settings
 
 from scrape.classes import GPX_Data
 
@@ -34,7 +37,8 @@ def json_to_points(filename):
     """
     Open JSON filename and return JSON data
     """
-    with open(filename, 'r') as f:
+    path = os.path.join(settings.BASE_DIR, 'static', filename)
+    with open(path, 'r') as f:
         return json.load(f)
 
 def create_gpx_data_class(filename):
