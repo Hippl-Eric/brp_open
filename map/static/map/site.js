@@ -1,8 +1,19 @@
 document.addEventListener("DOMContentLoaded", () => {
+
+    // Load map
     requestToken(loadMap);
+
+    // Assign launch modal to "About" anchor tag
     document.getElementById('launch-modal').addEventListener('click', launchModal);
-    document.getElementById('modal').addEventListener('click', closeModal);
-    document.getElementById('content').addEventListener('click', contentClick);
+
+    // Assign close modal to all classes "close-modal"
+    closeModalElements = document.querySelectorAll('.close-modal');
+    closeModalElements.forEach(elem => {
+        elem.addEventListener('click', closeModal);
+    });
+
+    // Assign click listener to prevent event propagation (prevent close modal when modal content is clicked)
+    document.getElementById('modal-content').addEventListener('click', contentClick);
 });
 
 let myMap = null
@@ -153,5 +164,4 @@ function closeModal() {
 
 function contentClick() {
     event.stopPropagation()
-    console.log('content')
 }
