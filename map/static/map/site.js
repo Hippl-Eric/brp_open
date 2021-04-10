@@ -1,5 +1,19 @@
 document.addEventListener("DOMContentLoaded", () => {
+
+    // Load map
     requestToken(loadMap);
+
+    // Assign launch modal to "About" anchor tag
+    document.getElementById('launch-modal').addEventListener('click', launchModal);
+
+    // Assign close modal to all classes "close-modal"
+    closeModalElements = document.querySelectorAll('.close-modal');
+    closeModalElements.forEach(elem => {
+        elem.addEventListener('click', closeModal);
+    });
+
+    // Assign click listener to prevent event propagation (prevent close modal when modal content is clicked)
+    document.getElementById('modal-content').addEventListener('click', contentClick);
 });
 
 let myMap = null
@@ -132,10 +146,22 @@ function formatUpdate(isoString) {
 
 function formatNextUpdate(isoString) {
     // Format: March 3rd
-    // TODO off by one day due to timezone conversion 
     const date = new Date(isoString);
     const options = {month: 'long', day: 'numeric' };
     let strDate = date.toLocaleDateString('en-NY', options);
                 
     return `${strDate}`;
+}
+
+function launchModal() {
+    event.preventDefault()
+    document.getElementById('modal').style.display = 'block';
+}
+
+function closeModal() {
+    document.getElementById('modal').style.display = 'none';
+}
+
+function contentClick() {
+    event.stopPropagation()
 }
