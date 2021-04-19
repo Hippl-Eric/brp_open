@@ -21,8 +21,6 @@ let highlightPolyline = null
 
 function requestToken(callback) {
     // Get accessToken from backend
-    // Temp solution to prevent committing token to source control
-    // Still visible to site user when public, TODO: setup restrictions
 
     // Grab Django csrftoken from cookie
     const csrftoken = Cookies.get('csrftoken');
