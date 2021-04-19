@@ -16,8 +16,8 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById('modal-content').addEventListener('click', contentClick);
 });
 
-let myMap = null
-let highlightPolyline = null
+// Initialize map
+let myMap;
 
 function requestToken(callback) {
     // Get accessToken from backend
@@ -81,14 +81,6 @@ function getRouteData(map) {
     });
 };
 
-function loadUpdate(data) {
-    // Format and apply time and date to DOM
-    const strUpdate = formatUpdate(data['update'])
-    const strNextUpdate = formatNextUpdate(data['next_update'])
-    document.getElementById('update').innerHTML = `Road Status as of <b>${strUpdate}</b>`
-    document.getElementById('next-update').innerHTML = `Next update: <b>${strNextUpdate}</b>`
-}
-
 function loadRoute(map, data) {
     // Create polylines and add to map
     let polylines = createPolylines(data['segments']);
@@ -101,13 +93,13 @@ function createPolylines(segmentArray) {
     // Parse segment data and return array of L.polyline objects
     let polylines = [];
     segmentArray.forEach(segObject => {
-        let color = 'green';
-        if (segObject['status'] == 'Closed') {
-            color = 'red';
-        };
 
         // Create polyline
-        polyline = L.polyline(segObject['points'], {color: color, weight: 10, opacity: 0.5});
+        polyline = L.polyline(segObject['points'], {
+            color: segObject['status'] == 'Closed'? 'red': 'green',
+            weight: 10,
+            opacity: 0.5
+        });
 
         // Polyline click function
         polyline.on('click', zoomPoly)
@@ -125,9 +117,16 @@ function createPolylines(segmentArray) {
 }
 
 function zoomPoly() {
+    // Zoom to segment after click
     myMap.fitBounds(this.getBounds());
-    // highlightPolyline = L.polyline(this.getLatLngs(), {color: 'blue', weight: 20, opacity: 0.5});
-    // highlightPolyline.addTo(myMap);
+}
+
+function loadUpdate(data) {
+    // Format and apply time and date to DOM
+    const strUpdate = formatUpdate(data['update'])
+    const strNextUpdate = formatNextUpdate(data['next_update'])
+    document.getElementById('update').innerHTML = `Road Status as of <b>${strUpdate}</b>`
+    document.getElementById('next-update').innerHTML = `Next update: <b>${strNextUpdate}</b>`
 }
 
 function formatUpdate(isoString) {
