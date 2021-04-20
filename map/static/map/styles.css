@@ -47,6 +47,7 @@ button {
 #modal-content {
     background-color: white;
     flex-grow: 1;
+    width: 100%;
     max-width: 450px;
     z-index: 1003;
     border-radius: 5px;
@@ -55,6 +56,8 @@ button {
     padding: 8px;
     display: flex;
     flex-direction: column;
+    box-sizing: border-box;
+    overflow-wrap: break-word;
 }
 
 #modal-content button {
